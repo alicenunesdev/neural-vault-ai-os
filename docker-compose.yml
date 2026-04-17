@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:13
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_DB: mydatabase
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+
+  qdrant:
+    image: qdrant/qdrant
+    ports:
+      - '6333:6333'
+
+  redis:
+    image: redis:alpine
+    ports:
+      - '6379:6379'
+
+  spring-boot-backend:
+    image: my-spring-boot-app:latest
+    ports:
+      - '8080:8080'
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/mydatabase
+      SPRING_DATASOURCE_USERNAME: myuser
+      SPRING_DATASOURCE_PASSWORD: mypassword
+      JWT_SECRET: myjwtsecret
+      EXTERNAL_API_KEY: myapikey
+      ENCRYPTION_KEY: myencryptionkey
+      CORS_ORIGINS: http://localhost:4200
+
+  angular-frontend:
+    image: my-angular-app:latest
+    ports:
+      - '4200:4200'
+    environment:
+      API_URL: http://localhost:8080/api
